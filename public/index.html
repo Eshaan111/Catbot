@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +17,7 @@
       <input
         type="text"
         id="searchInput"
-        placeholder="Type a phrase (e.g., happy, sleepy, playful)..."
+        placeholder="Search Tenor, Describe your cat (e.g., happy, sleepy, playful)..."
         autocomplete="off"
       >
       <button id="searchBtn">Search</button>
@@ -31,7 +30,15 @@
 
     <div id="error" class="error hidden"></div>
 
-    <div id="results" class="results-grid"></div>
+    <div id="results" class="results-container"></div>
+
+    <!-- Navigation controls -->
+    <div id="controls" class="controls hidden">
+      <button id="prevBtn" class="control-btn">← Previous</button>
+      <span id="counter" class="counter">1 / 50</span>
+      <button id="nextBtn" class="control-btn">Next →</button>
+      <button id="downloadBtn" class="control-btn download-btn">⬇ Download</button>
+    </div>
   </div>
 
   <script src="app.js"></script>

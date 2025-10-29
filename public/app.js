@@ -1,11 +1,33 @@
 const search_bar = document.getElementById('searchInput');
 const search_btn = document.getElementById('searchBtn');
-const results = document.getElementById('results')
+const results = document.getElementById('results');
+const controls = document.getElementById('controls');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const counter = document.getElementById('counter');
+const loading = document.getElementById('loading');
+const errorDiv = document.getElementById('error');
+let count;
+let url_array = [];
+let search_limit = 0;
+
+fetch('/api/config')
+    .then(result => { return result.json(); })
+    .then(data => {
+        console.log('Config Recieved from /api/config')
+        console.log(data);
+        search_limit = data['search_limit']
+    })
+
+
 
 
 function search(phrase) {
-    let val = search_bar.value;
-    fetch(`/api?phrase=${phrase}`)
+    url_array = [];
+    count = 1;
+    counter.innerHTML = `${count} / ${search_limit}`
+    fetch(`/api/search?phrase=${phrase}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Api req did not Resolve , server error", response.status);
@@ -13,11 +35,18 @@ function search(phrase) {
             return response.json();
         })
         .then(data => {
+            count = 0;
             console.log(data);
-            console.log(data['results'][0]['media_formats']['gif']['url'])
-            let url = (data['results'][0]['media_formats']['gif']['url'])
+            console.log(data['results'][0]['media_formats']['gif']['url']);
+            let url = (data['results'][0]['media_formats']['gif']['url']);
+            for (i = 0; i < 49; i++) {
+                url_array[(url_array).length] = (data['results'][i]['media_formats']['gif']['url']);
+            }
             results.innerHTML = '';
-            results.innerHTML = `<img src="${url}" alt="Cat GIF">`;
+            results.innerHTML = `<img src="${url_array[count]}" alt="Cat GIF">`;
+            controls.classList.remove('hidden');
+            controls.classList.add('shown');
+
 
         })
         .catch(error => {
@@ -26,6 +55,29 @@ function search(phrase) {
 
 }
 
+function nextScroll() {
+    if (count + 1 == search_limit) {
+        return
+    }
+    count++;
+    console.log(count)
+    counter.innerHTML = `${count + 1} / ${search_limit}`
+    results.innerHTML = '';
+    results.innerHTML = `<img src="${url_array[count]}" alt="Cat GIF">`;
+
+}
+
+function prevScroll() {
+    if (count + 1 == 2) {
+        return
+    }
+    count--;
+    console.log(count)
+    counter.innerHTML = `${count} / ${search_limit}`
+    results.innerHTML = '';
+    results.innerHTML = `<img src="${url_array[count]}" alt="Cat GIF">`;
+
+}
 
 search_btn.addEventListener('click', () => {
     if (search_bar.value != '') {
@@ -34,6 +86,17 @@ search_btn.addEventListener('click', () => {
     }
 
 })
+
+prevBtn.addEventListener('click', () => {
+    prevScroll();
+})
+
+nextBtn.addEventListener('click', () => {
+    nextScroll();
+
+})
+
+
 search_bar.addEventListener('keypress', (event) => {
     if (event.key == 'Enter' && search_bar.value != '') {
         search(search_bar.value);

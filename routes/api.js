@@ -29,21 +29,23 @@ apiRouter.use(express.json());
 //     // res.status(404).send('not-found');
 // })
 
-apiRouter.get('/', (req, res) => {
+apiRouter.get('/config', (req, res) => {
+    res.json({
+        search_limit: config.searchLimit
+    })
+})
+
+
+apiRouter.get('/search', (req, res) => {
 
     query = req.query;
     phrase = query.phrase;
-
-    fetch(`https://tenor.googleapis.com/v2/search?q=${phrase}&key=${api_key}&client_key=my_test_app&limit=1`)
+    fetch(`https://tenor.googleapis.com/v2/search?q=cat ${phrase}&key=${api_key}&client_key=my_test_app&limit=${config.searchLimit}`)
         .then(resolve => { return resolve.json() })
         .then(data => {
             console.log(data);
             res.send(data); //syntax = obj {next : <> , results : ARRAY OF OBJECTS <>}
         })
-
-
-
 })
-
 
 module.exports = apiRouter;
