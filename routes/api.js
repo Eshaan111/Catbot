@@ -34,9 +34,14 @@ apiRouter.get('/', (req, res) => {
     query = req.query;
     phrase = query.phrase;
 
-    fetch(`https://tenor.googleapis.com/v2/search?q=${phrase}&key=${api_key}&client_key=my_test_app&limit=8`)
+    fetch(`https://tenor.googleapis.com/v2/search?q=${phrase}&key=${api_key}&client_key=my_test_app&limit=1`)
         .then(resolve => { return resolve.json() })
-        .then(data => console.log(data))
+        .then(data => {
+            console.log(data);
+            res.send(data); //syntax = obj {next : <> , results : ARRAY OF OBJECTS <>}
+        })
+
+
 
 })
 
