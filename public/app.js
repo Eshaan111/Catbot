@@ -9,6 +9,7 @@ const counter = document.getElementById('counter');
 const loading = document.getElementById('loading');
 const errorDiv = document.getElementById('error');
 let count;
+let curr_phrase;
 let url_array = [];
 let search_limit = 0;
 
@@ -24,6 +25,7 @@ fetch('/api/config')
 
 
 function search(phrase) {
+    curr_phrase = phrase;
     url_array = [];
     count = 1;
     counter.innerHTML = `${count} / ${search_limit}`
@@ -60,7 +62,6 @@ function nextScroll() {
         return
     }
     count++;
-    console.log(count)
     counter.innerHTML = `${count + 1} / ${search_limit}`
     results.innerHTML = '';
     results.innerHTML = `<img src="${url_array[count]}" alt="Cat GIF">`;
@@ -72,11 +73,27 @@ function prevScroll() {
         return
     }
     count--;
-    console.log(count)
     counter.innerHTML = `${count} / ${search_limit}`
     results.innerHTML = '';
     results.innerHTML = `<img src="${url_array[count]}" alt="Cat GIF">`;
 
+}
+
+async function download(phrase) {
+    curr_url = url_array[count];
+    const img_response = await fetch(curr_url);
+    const blob = await img_response.blob();
+
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = phrase;
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
 }
 
 search_btn.addEventListener('click', () => {
@@ -96,6 +113,10 @@ nextBtn.addEventListener('click', () => {
 
 })
 
+downloadBtn.addEventListener('click', () => {
+    download(curr_phrase);
+
+})
 
 search_bar.addEventListener('keypress', (event) => {
     if (event.key == 'Enter' && search_bar.value != '') {
