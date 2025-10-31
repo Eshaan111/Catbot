@@ -2,7 +2,6 @@ const path = require('path')
 const express = require('express');
 const app = express();
 const apiRout = require('./routes/api.js');
-const { searchLimit } = require('./config/config.js');
 require('dotenv').config();
 const PORT = process.env.PORT || 3000;
 
